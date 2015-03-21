@@ -310,13 +310,13 @@ gimp_ink_motion (GimpPaintCore    *paint_core,
   GeglColor      *color;
   GimpBlob       *last_blob;
   GimpCoords     *coords;
-  gint            nstrokes;
+  gint            n_strokes;
   gint            i;
 
-  nstrokes = gimp_symmetry_get_size (sym);
+  n_strokes = gimp_symmetry_get_size (sym);
 
   if (ink->last_blobs &&
-      g_list_length (ink->last_blobs) != nstrokes)
+      g_list_length (ink->last_blobs) != n_strokes)
     {
       g_list_free_full (ink->last_blobs, g_free);
       ink->last_blobs = NULL;
@@ -330,7 +330,7 @@ gimp_ink_motion (GimpPaintCore    *paint_core,
           ink->start_blobs = NULL;
         }
 
-      for (i = 0; i < nstrokes; i++)
+      for (i = 0; i < n_strokes; i++)
         {
           coords = gimp_symmetry_get_coords (sym, i);
 
@@ -354,7 +354,7 @@ gimp_ink_motion (GimpPaintCore    *paint_core,
     }
   else
     {
-      for (i = 0; i < nstrokes; i++)
+      for (i = 0; i < n_strokes; i++)
         {
           GimpBlob *blob;
           GimpBlob *blob_union = NULL;
@@ -381,7 +381,7 @@ gimp_ink_motion (GimpPaintCore    *paint_core,
     }
 
   /* Get the buffer */
-  for (i = 0; i < nstrokes; i++)
+  for (i = 0; i < n_strokes; i++)
     {
       GimpBlob *blob_to_render = g_list_nth_data (blobs_to_render, i);
 
