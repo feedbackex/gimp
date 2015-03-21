@@ -772,6 +772,7 @@ xcf_load_image_props (XcfInfo   *info,
                     }
                   mstroke = gimp_multi_stroke_new (type, image);
                   gimp_image_add_multi_stroke (image, mstroke);
+                  g_object_unref (mstroke);
 
                   settings = gimp_multi_stroke_get_xcf_settings (mstroke,
                                                                  &nsettings);
@@ -856,6 +857,8 @@ xcf_load_image_props (XcfInfo   *info,
                           return FALSE;
                         }
                     }
+                  g_free (settings);
+
                   if (active == i)
                     active_mstroke = mstroke;
                 }
