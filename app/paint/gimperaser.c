@@ -29,8 +29,7 @@
 #include "core/gimpdrawable.h"
 #include "core/gimpdynamics.h"
 #include "core/gimpimage.h"
-
-#include "gimpmultistroke.h"
+#include "core/gimpsymmetry.h"
 
 #include "gimperaser.h"
 #include "gimperaseroptions.h"
@@ -41,13 +40,13 @@
 static void   gimp_eraser_paint  (GimpPaintCore    *paint_core,
                                   GimpDrawable     *drawable,
                                   GimpPaintOptions *paint_options,
-                                  GimpMultiStroke  *mstroke,
+                                  GimpSymmetry     *sym,
                                   GimpPaintState    paint_state,
                                   guint32           time);
 static void   gimp_eraser_motion (GimpPaintCore    *paint_core,
                                   GimpDrawable     *drawable,
                                   GimpPaintOptions *paint_options,
-                                  GimpMultiStroke  *mstroke);
+                                  GimpSymmetry     *sym);
 
 
 G_DEFINE_TYPE (GimpEraser, gimp_eraser, GIMP_TYPE_BRUSH_CORE)
@@ -85,7 +84,7 @@ static void
 gimp_eraser_paint (GimpPaintCore    *paint_core,
                    GimpDrawable     *drawable,
                    GimpPaintOptions *paint_options,
-                   GimpMultiStroke  *mstroke,
+                   GimpSymmetry     *sym,
                    GimpPaintState    paint_state,
                    guint32           time)
 {
@@ -108,7 +107,7 @@ gimp_eraser_paint (GimpPaintCore    *paint_core,
         }
       break;
     case GIMP_PAINT_STATE_MOTION:
-      gimp_eraser_motion (paint_core, drawable, paint_options, mstroke);
+      gimp_eraser_motion (paint_core, drawable, paint_options, sym);
       break;
 
     default:
@@ -120,7 +119,7 @@ static void
 gimp_eraser_motion (GimpPaintCore    *paint_core,
                     GimpDrawable     *drawable,
                     GimpPaintOptions *paint_options,
-                    GimpMultiStroke  *mstroke)
+                    GimpSymmetry     *sym)
 {
   GimpEraserOptions    *options  = GIMP_ERASER_OPTIONS (paint_options);
   GimpContext          *context  = GIMP_CONTEXT (paint_options);
@@ -154,20 +153,20 @@ gimp_eraser_motion (GimpPaintCore    *paint_core,
   else
     paint_mode = GIMP_NORMAL_MODE;
 
-  if (gimp_dynamics_is_output_enabled (dynamics, GIMP_DYNAMICS_OUTPUT_FORCE))
-    force = gimp_dynamics_get_linear_value (dynamics,
-                                            GIMP_DYNAMICS_OUTPUT_FORCE,
-                                            coords,
-                                            paint_options,
-                                            fade_point);
-  else
-    force = paint_options->brush_force;
-
-  nstrokes = gimp_multi_stroke_get_size (mstroke);
+  nstrokes = gimp_symmetry_get_size (sym);
 
   for (i = 0; i < nstrokes; i++)
     {
-      coords = gimp_multi_stroke_get_coords (mstroke, i);
+      coords = gimp_symmetry_get_coords (sym, i);
+
+      if (gimp_dynamics_is_output_enabled (dynamics, GIMP_DYNAMICS_OUTPUT_FORCE))
+        force = gimp_dynamics_get_linear_value (dynamics,
+                                                GIMP_DYNAMICS_OUTPUT_FORCE,
+                                                coords,
+                                                paint_options,
+                                                fade_point);
+      else
+        force = paint_options->brush_force;
 
       opacity = gimp_dynamics_get_linear_value (dynamics,
                                                 GIMP_DYNAMICS_OUTPUT_OPACITY,
@@ -186,7 +185,7 @@ gimp_eraser_motion (GimpPaintCore    *paint_core,
       if (! paint_buffer)
         continue;
 
-      op = gimp_multi_stroke_get_operation (mstroke, i,
+      op = gimp_symmetry_get_operation (sym, i,
                                             paint_width,
                                             paint_height);
 
