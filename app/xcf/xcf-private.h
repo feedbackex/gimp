@@ -58,7 +58,6 @@ typedef enum
   PROP_GROUP_ITEM_FLAGS   = 31,
   PROP_LOCK_POSITION      = 32,
   PROP_FLOAT_OPACITY      = 33,
-  PROP_SYMMETRY           = 34
 } PropType;
 
 typedef enum

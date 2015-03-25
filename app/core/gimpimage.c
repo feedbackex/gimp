@@ -2292,12 +2292,9 @@ gimp_image_get_xcf_version (GimpImage    *image,
                             gint         *gimp_version,
                             const gchar **version_string)
 {
-  GList            *layers;
-  GimpImagePrivate *private;
-  GList            *list;
-  gint              version = 0;  /* default to oldest */
-
-  private = GIMP_IMAGE_GET_PRIVATE (image);
+  GList *layers;
+  GList *list;
+  gint   version = 0;  /* default to oldest */
 
   /* need version 1 for colormaps */
   if (gimp_image_get_colormap (image))
@@ -2347,12 +2344,6 @@ gimp_image_get_xcf_version (GimpImage    *image,
   if (zlib_compression)
     version = MAX (8, version);
 
-  /* need version 9 for symmetry */
-  if (private->symmetries)
-    {
-      version = MAX (9, version);
-    }
-
   switch (version)
     {
     case 0:
@@ -2372,7 +2363,6 @@ gimp_image_get_xcf_version (GimpImage    *image,
     case 6:
     case 7:
     case 8:
-    case 9:
       if (gimp_version)   *gimp_version   = 210;
       if (version_string) *version_string = "GIMP 2.10";
       break;
